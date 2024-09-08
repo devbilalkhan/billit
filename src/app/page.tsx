@@ -8,7 +8,6 @@ export default async function Home() {
 
 // React and Next.js imports
 import Link from "next/link";
-import Image from "next/image";
 
 // Third-party library imports
 import Balancer from "react-wrap-balancer";
@@ -22,16 +21,20 @@ const Hero = () => {
   return (
     <section className="py-8 md:py-12">
       <div className="flex flex-col items-center text-center">
-        <Image
+        {/* <Image
           src=""
           width={172}
           height={72}
           alt="Company Logo"
           className="not-prose mb-6 dark:invert md:mb-8"
-        />
+        /> */}
         <h1 className="!mb-0">
           <Balancer>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+            <p className="text-7xl font-bold mb- text-accent">
+              <span className="text-primary">En</span>
+              voice
+              <span className="text-primary">.</span>
+            </p>
           </Balancer>
         </h1>
         <h3 className="text-muted-foreground">

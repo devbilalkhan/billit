@@ -1,37 +1,17 @@
 "use client";
 
-import {
-  LoginLink,
-  LogoutLink,
-  RegisterLink,
-} from "@kinde-oss/kinde-auth-nextjs";
+import { LoginLink, RegisterLink } from "@kinde-oss/kinde-auth-nextjs";
 import { Button } from "./ui/button";
 
-type AuthButtonsProps = {
-  isLoggedIn: boolean;
-};
-
-function AuthButton({ isLoggedIn }: AuthButtonsProps) {
+export default function AuthButton() {
   return (
     <>
-      {isLoggedIn ? (
-        <>
-          <Button asChild>
-            <LogoutLink>Log out</LogoutLink>
-          </Button>
-        </>
-      ) : (
-        <>
-          <Button asChild>
-            <LoginLink>Sign In</LoginLink>
-          </Button>
-          <Button asChild variant="secondary">
-            <RegisterLink>Sign Up</RegisterLink>
-          </Button>
-        </>
-      )}
+      <LoginLink>
+        <Button>Sign In</Button>
+      </LoginLink>
+      <RegisterLink>
+        <Button variant="secondary">Sign Up</Button>
+      </RegisterLink>
     </>
   );
 }
-
-export default AuthButton;
