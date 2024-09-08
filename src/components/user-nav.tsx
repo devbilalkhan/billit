@@ -24,13 +24,13 @@ export const sidebarLinks = [
   {
     id: "2",
     label: "Settings",
-    href: "/settings",
+    href: "/dashboard/settings",
     icon: Settings,
   },
   {
     id: "3",
     label: "Billing",
-    href: "/billing",
+    href: "/dashboard/billing",
     icon: CreditCard,
   },
 ];
@@ -41,7 +41,7 @@ type UserNavProps = {
   image: string;
 };
 
- function UserNav({ name, email, image }: UserNavProps) {
+function UserNav({ name, email, image }: UserNavProps) {
   return (
     <section>
       <DropdownMenu>

@@ -14,7 +14,7 @@ function Sidebar({}: SidebarProps) {
   console.log(pathname);
   return (
     <section>
-      <nav className="grid items-start gap-4 px-3">
+      <nav className="grid items-start gap-4 ">
         {sidebarLinks.map((link) => (
           <Link href={link.href} key={link.id}>
             <div
