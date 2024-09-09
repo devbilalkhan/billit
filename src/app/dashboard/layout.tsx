@@ -55,18 +55,11 @@ async function getData({
 }
 
 async function Layout({ children }: LayoutProps) {
-  const [accessGranted, user] = await serverSideAuth();
+  const [accessGranted] = await serverSideAuth();
   if (!accessGranted) {
     return redirect("/");
   }
 
-  await getData({
-    email: user.email,
-    id: user.id,
-    firstName: user.given_name,
-    lastName: user.family_name,
-    profileImage: user.picture,
-  });
   return (
     <div className="flex flex-col space-y-6 h-[calc(100vh-10vh)]">
       <div className="container  flex-1 grid md:grid-cols-[250px_1fr]">

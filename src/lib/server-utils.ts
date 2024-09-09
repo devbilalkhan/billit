@@ -7,5 +7,7 @@ export const serverSideAuth = async () => {
   const accessGranted = await isAuthenticated();
 
   const user = await getUser();
+
+  
   return [accessGranted, user] as const;
 };

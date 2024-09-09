@@ -1,4 +1,12 @@
+import { Button } from "@/components/ui/button";
+import { serverSideAuth } from "@/lib/server-utils";
+import { redirect } from "next/navigation";
+
 export default async function Home() {
+  const [accessGranted] = await serverSideAuth();
+  if (accessGranted) {
+    return redirect("/dashboard");
+  }
   return (
     <section className="flex items-center justify-center bg-background h-[90vh]">
       <Hero />
@@ -14,8 +22,6 @@ import Balancer from "react-wrap-balancer";
 import { Camera } from "lucide-react";
 
 // Local component imports
-
-import { Button } from "@/components/ui/button";
 
 const Hero = () => {
   return (

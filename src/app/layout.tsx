@@ -5,7 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Navbar } from "@/components/navbar";
 
 import { serverSideAuth } from "@/lib/server-utils";
-import { redirect } from "next/navigation";
+import { Toaster } from "sonner";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -29,7 +29,6 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const [accessGranted, user] = await serverSideAuth();
-
   return (
     <html lang="en">
       <body
@@ -44,6 +43,7 @@ export default async function RootLayout({
         >
           <Navbar accessGranted={accessGranted} user={user} />
           {children}
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
