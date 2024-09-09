@@ -3,12 +3,13 @@ import prisma from "@/lib/db";
 import { serverSideAuth } from "@/lib/server-utils";
 import { redirect } from "next/navigation";
 import React from "react";
+import { stripe } from "../api/stripe";
 
 type LayoutProps = {
   children: React.ReactNode;
 };
 
-async function getData({
+export async function getData({
   email,
   id,
   firstName,
@@ -21,9 +22,10 @@ async function getData({
   lastName: string | undefined | null;
   profileImage: string | undefined | null;
 }) {
+  "use server";
   const name = `${firstName ?? "1"} ${lastName ?? ""}`;
   try {
-    const user = await prisma.user.findUnique({
+    let user = await prisma.user.findUnique({
       where: {
         id: id,
       },
@@ -34,18 +36,32 @@ async function getData({
     });
 
     if (!user) {
-      const user = await prisma.user.create({
+      user = await prisma.user.create({
         data: {
           id: id,
           email: email,
           name: name,
         },
       });
-      return {
-        success: true,
-        data: user,
-      };
     }
+    if (!user.stripCustomerId) {
+      const data = await stripe.customers.create({
+        email: email,
+      });
+      await prisma.user.update({
+        where: {
+          id: id,
+        },
+        data: {
+          stripCustomerId: data.id,
+        },
+      });
+    }
+
+    return {
+      success: true,
+      data: user,
+    };
   } catch (error) {
     return {
       success: false,
@@ -55,18 +71,25 @@ async function getData({
 }
 
 async function Layout({ children }: LayoutProps) {
-  const [accessGranted] = await serverSideAuth();
+  const [accessGranted, user] = await serverSideAuth();
   if (!accessGranted) {
     return redirect("/");
   }
+  await getData({
+    email: user.email as string,
+    id: user.id,
+    firstName: user.given_name,
+    lastName: user.family_name,
+    profileImage: user.picture,
+  });
 
   return (
     <div className="flex flex-col space-y-6 h-[calc(100vh-10vh)]">
       <div className="container  flex-1 grid md:grid-cols-[250px_1fr]">
-        <aside className="hidden w-[250px] flex-col md:flex  h-full">
+        <aside className="hidden w-[250px] flex-col md:flex  h-full py-5">
           <Sidebar />
         </aside>
-        <main className="px-10">{children}</main>
+        <main className="px-10 py-5">{children}</main>
       </div>
     </div>
   );

@@ -21,7 +21,7 @@ function Sidebar({}: SidebarProps) {
               className={cn(
                 "group flex items-center bg-transparent rounded-md px-3 py-2 hover:text-accent-foreground hover:bg-accent font-medium",
                 {
-                  "bg-accent border-r-[4px] border-x-green-500":
+                  "bg-accent border-r-[4px] border-primary":
                     pathname === link.href,
                 }
               )}

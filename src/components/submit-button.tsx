@@ -9,13 +9,23 @@ type LoadingButtonProps = {
   children: React.ReactNode;
   [key: string]: unknown;
   loading?: true | false;
+  className?: string;
 };
 
-export function LoadingButton({ children, ...props }: LoadingButtonProps) {
+export function LoadingButton({
+  children,
+  className,
+  ...props
+}: LoadingButtonProps) {
   const { pending } = useFormStatus();
   return (
     <>
-      <Button className="group mt-2 w-fit" disabled={pending} {...props}>
+      <Button
+        type="submit"
+        className={cn("group mt-2 w-fit", className)}
+        disabled={pending}
+        {...props}
+      >
         {pending ? <>{<LoadingSpinner />}Please wait</> : children}
       </Button>
     </>

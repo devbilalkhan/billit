@@ -24,16 +24,20 @@ import prisma from "@/lib/db";
 import { serverSideAuth } from "@/lib/server-utils";
 import { sleep } from "@/lib/utils";
 import { UserSchema } from "@/validations/validations";
-import { toast } from "sonner";
+import { revalidatePath } from "next/cache";
 
 const themeOptions = [
-  { id: 1, value: "green-theme", label: "Green" },
-  { id: 2, value: "blue-theme", label: "Blue" },
-  { id: 3, value: "violet-theme", label: "Violet" },
-  { id: 4, value: "yellow-theme", label: "Yellow" },
-  { id: 5, value: "orange-theme", label: "Orange" },
-  { id: 6, value: "red-theme", label: "Red" },
-  { id: 7, value: "rose-theme", label: "Rose" },
+  { id: 1, value: "theme-green", label: "Green" },
+  { id: 2, value: "theme-blue", label: "Blue" },
+  { id: 3, value: "theme-violet", label: "Violet" },
+  { id: 4, value: "theme-yellow", label: "Yellow" },
+  { id: 5, value: "theme-orange", label: "Orange" },
+  { id: 6, value: "theme-red", label: "Red" },
+  { id: 8, value: "theme-rose", label: "Rose" },
+  { id: 9, value: "theme-slate", label: "Slate" },
+  { id: 10, value: "theme-stone", label: "Stone" },
+  { id: 11, value: "theme-neutral", label: "Neutral" },
+  { id: 12, value: "theme-gray", label: "Gray" },
 ];
 
 async function Page() {
@@ -79,6 +83,8 @@ async function Page() {
         success: false,
         error: error,
       };
+    } finally {
+      revalidatePath("/", "layout");
     }
   }
 
