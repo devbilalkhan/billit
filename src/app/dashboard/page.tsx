@@ -3,7 +3,11 @@ type PageProps = {
 };
 
 function Page({}: PageProps) {
-  return <h1>Dashboard</h1>;
+  return (
+    <div className="flex w-full h-full justify-center items-center">
+      dashboard
+    </div>
+  );
 }
 
 export default Page;

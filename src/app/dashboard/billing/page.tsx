@@ -1,9 +1,9 @@
-import { getStripeSession } from "@/app/api/stripe";
 import { LoadingButton } from "@/components/submit-button";
 
 import { Card, CardContent } from "@/components/ui/card";
 import prisma from "@/lib/db";
 import { serverSideAuth } from "@/lib/server-utils";
+import { getStripeSession } from "@/lib/stripe";
 import { UserSchema } from "@/validations/validations";
 import { KindeUser } from "@kinde-oss/kinde-auth-nextjs/types";
 import { CheckCircle2 } from "lucide-react";
@@ -70,32 +70,40 @@ type PageProps = {
 
 async function Page({}: PageProps) {
   const [, user] = await serverSideAuth();
-  const response = await getData(user.id);
+  const data = getData(user.id);
 
   async function createSubscription() {
     "use server";
+    let subscriptionUrl;
     try {
-      const response = await prisma.user.findUnique({
+      const dbUser = await prisma.user.findUnique({
         where: {
-          id: user.id, 
+          id: user.id,
         },
         select: {
-          stripCustomerId: true
-        }
-      })
-    } catch (error) {
-      
-    }
-    if (!response.data?.user.stripCustomerId) {
-      throw new Error("Unable to create subscription");
-    }
+          stripCustomerId: true,
+        },
+      });
+      if (!dbUser?.stripCustomerId) {
+        throw new Error("Unable to create subscription");
+      }
 
-    const subscriptionUrl = await getStripeSession({
-      customerId: response.data?.user.stripCustomerId,
-      domainUrl: "https://localhost:3000",
-      priceId: process.env.STRIPE_PRICE_ID as string,
-    });
-    return redirect(subscriptionUrl);
+      const domainUrl = process.env.DOMAIN_URL || "http://localhost:3000";
+
+      subscriptionUrl = await getStripeSession({
+        customerId: dbUser.stripCustomerId,
+        domainUrl: domainUrl as string,
+        priceId: process.env.STRIPE_PRICE_ID as string,
+      });
+    } catch (error) {
+      return {
+        success: false,
+        error:
+          error instanceof Error ? error.message : "An unknown error occurred",
+      };
+    } finally {
+      return redirect(subscriptionUrl as string);
+    }
   }
 
   return (
