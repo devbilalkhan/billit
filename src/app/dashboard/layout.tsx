@@ -1,9 +1,10 @@
 import Sidebar from "@/components/sidebar";
 import prisma from "@/lib/db";
 import { serverSideAuth } from "@/lib/server-utils";
+import { stripe } from "@/lib/stripe";
 import { redirect } from "next/navigation";
 import React from "react";
-import { stripe } from "../api/stripe";
+
 
 type LayoutProps = {
   children: React.ReactNode;

@@ -1,9 +1,15 @@
 import { LoadingButton } from "@/components/submit-button";
 
-import { Card, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import prisma from "@/lib/db";
 import { serverSideAuth } from "@/lib/server-utils";
-import { getStripeSession } from "@/lib/stripe";
+import { getStripeSession, stripe } from "@/lib/stripe";
 import { UserSchema } from "@/validations/validations";
 import { KindeUser } from "@kinde-oss/kinde-auth-nextjs/types";
 import { CheckCircle2 } from "lucide-react";
@@ -70,7 +76,7 @@ type PageProps = {
 
 async function Page({}: PageProps) {
   const [, user] = await serverSideAuth();
-  const data = getData(user.id);
+  const data = await getData(user.id);
 
   async function createSubscription() {
     "use server";
@@ -106,6 +112,44 @@ async function Page({}: PageProps) {
     }
   }
 
+  async function createCustomerPortal() {
+    "use server";
+    const session = await stripe.billingPortal.sessions.create({
+      customer: data.data?.user.stripCustomerId as string,
+      return_url: "http://localhost:3000/dashboard",
+    });
+    return redirect(session.url);
+  }
+
+  if (data.data?.status === "active") {
+    return (
+      <div className="grid items-start gap-8">
+        <div className="flex items-center justify-between px-2">
+          <div className="grid gap-1">
+            <h1 className="text-3xl md:text-4xl">Subscription</h1>
+            <p className="text-lg text-muted-foreground">
+              Your subscription details are here
+            </p>
+          </div>
+        </div>
+        <Card className="w-full lg:w-2/3">
+          <CardHeader>
+            <CardTitle>Edit Subscription</CardTitle>
+            <CardDescription>
+              Click on the button below, this will give you the opportunity to
+              change your payment details and view your statement at the same
+              time.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form action={createCustomerPortal}>
+              <LoadingButton>View payment details</LoadingButton>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
   return (
     <>
       <div className="max-w-md mx-auto space-y-4">
